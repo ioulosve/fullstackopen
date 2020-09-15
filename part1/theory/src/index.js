@@ -1,33 +1,37 @@
-import React from 'react'
+// Passing state to child components and refactoring
+
+import React, { useState } from 'react' 
 import ReactDOM from 'react-dom'
 
-// a React component, an object that holds a function
-const Hello = (props) => (
-  <>
-    <p>Ciao {props.name}, tu hai {props.age} anni</p>
-  </>
+// Display the value of the counter
+const Display = ({counter}) => <div>{counter}</div>
+
+
+const Button = ({handleClick, text}) => (
+  <button onClick={handleClick}>
+    {text}
+  </button>
 )
 
-// Component names must be Capitalized
-const Footer = () => (
-  <div>
-    Greeting app created by <a href="https://github.com/giulioverazzo">Giulio Verazzo</a>
-  </div>
-)
-
-
-//App is also a component (the main one), the lambda is written with more verbosity here
 const App = () => {
-  const name = 'Pietro'
-  const age = 10
+
+  // A good practice is to place the state as up as possibile in the components hierarchy.
+  // This way, the child components can share the same state.
+  const [ counter, setCounter ] = useState(0)
+
+  //don't forget that setCounter causes the re-rendering!
+  const increaseByOne = () => setCounter(counter + 1)
+  const decreaseByOne = () => setCounter(counter - 1)
+  const setToZero = () => setCounter(0)
 
   return (
-  <>
-    <h1>Saluti</h1>
-    <Hello name="Mario" age={26+10}/>
-    <Hello name={name} age={age}/>
-    <Footer />
-  </>
-)}
+    <div>
+      <Display counter={counter} />
+      <Button handleClick={increaseByOne} text="+"/>
+      <Button handleClick={decreaseByOne} text="-"/>
+      <Button handleClick={setToZero} text="reset"/>
+    </div>
+  )
+}
 
 ReactDOM.render(<App />, document.getElementById('root'))

@@ -1,0 +1,32 @@
+// Event handler
+
+import React, { useState } from 'react' 
+import ReactDOM from 'react-dom'
+
+const App = () => {
+  const [ counter, setCounter ] = useState(0)
+
+  return (
+    <div>
+      <div>{counter}</div>
+      <button onClick={() => {setCounter(counter + 1)}}>
+        plus
+      </button>
+      <button onClick={() => {setCounter(0)}}>
+        Reset
+      </button>
+    </div>
+  )
+    /**
+     * Note: the event handler must be a FUNCTION, not a FUNCTION CALL
+     * 
+     * FUNCTION OK     -->  <button onClick={() => {setCounter(counter + 1)}}>
+     * FUNCTION CALL   -->  <button onClick={setCounter(counter + 1)}>
+     * 
+     * the button needs a function to execute. The function call written as the handler
+     * is syntactally correct but is a functional error, it will cause the re-rendering 
+     * the component over and over again.
+     */
+}
+
+ReactDOM.render(<App />, document.getElementById('root'))
