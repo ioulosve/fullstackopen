@@ -1,0 +1,45 @@
+// Rules of state Hooks
+
+import React, { useState } from 'react' 
+import ReactDOM from 'react-dom'
+
+const App = (props) => {
+
+  /** The function useState(0) is called a "Hook".
+   *  
+   *  The hook must NOT be called from inside of a loop,
+   *  a conditional expression or any place that is not a 
+   *  function defining a component.
+   * 
+   *  The hook has to be called fomr inside a function body
+   *  that defines a React component.
+   * 
+   *  The reason is that Hooks as to always be called in the 
+   *  same order, otherwise the application may behave strangely.
+   */
+
+
+  // these are ok
+  const [age, setAge] = useState(0)
+  const [name, setName] = useState('Juha Tauriainen')
+
+
+  if ( age > 10 ) {
+    // NOOO this does not work!
+    const [foobar, setFoobar] = useState(null)
+  }
+
+  for ( let i = 0; i < age; i++ ) {
+    // NOOO also this is not good
+    const [rightWay, setRightWay] = useState(false)
+  }
+
+  const notGood = () => {
+    // NOOO and this is also illegal
+    const [x, setX] = useState(-1000)
+  }
+
+  return 0
+}
+
+ReactDOM.render(<App />, document.getElementById('root'))

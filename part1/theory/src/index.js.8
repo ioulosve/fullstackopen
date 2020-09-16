@@ -1,0 +1,49 @@
+// A more complex state
+
+import React, { useState } from 'react' 
+import ReactDOM from 'react-dom'
+
+const App = () => {
+
+  // the state can be a complex object but is not always a good choice.
+  const [clicks, setClicks] = useState({
+    left:0, 
+    right:0
+  })
+
+  /* in React its forbidden (but possible) to mutate the state
+  *  directly. So this:
+
+      setClicks(clicks.left + 1)}
+
+     is NOT a good because it directly mutates the state.
+  */
+  // CHANGING STATE AS TO ALWAYS BE DONE BY SETTING THE STATE TO A NEW OBJECT.
+
+   // this is good because it create a new object that is used as the new state.
+  const handleLeftClick = () => {
+    //setClicks({right: clicks.right, left: clicks.left + 1}) is written as:
+
+    setClicks({...clicks, left: clicks.left + 1})
+    // using the object spread syntax ...clicks
+  }
+
+  const handleRightClick = () => {
+    setClicks({...clicks, right: clicks.right + 1})
+  }
+
+  return (
+    <div>
+      {clicks.left}
+      <button onClick={handleLeftClick}>
+        left
+      </button>
+      <button onClick={handleRightClick}>
+        right
+      </button>
+      {clicks.right}
+    </div>
+  )
+}
+
+ReactDOM.render(<App />, document.getElementById('root'))

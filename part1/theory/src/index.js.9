@@ -1,0 +1,69 @@
+// Handling arrays
+
+import React, { useState } from 'react' 
+import ReactDOM from 'react-dom'
+
+// This component uses CONDITIONAL RENDERING!
+const History = (props) => {
+  if (props.allClicks.length === 0) {
+    return (
+      <div>
+        the app is used by pressing the buttons
+      </div>
+    )
+  }
+
+  return (
+    <div>
+      button press history: {props.allClicks.join(' ')}
+    </div>
+  )
+}
+
+const Button = ({ onClick, text }) => ( 
+  <button onClick={onClick}>{text}</button>
+)
+
+const App = () => {
+
+  // REMEMBER TO NOT MUTATE THE STATE DIRECTLY. ALWAYS REPLACE IT WITH A NEW OBJECT!
+  const [left, setLeft] = useState(0)
+  const [right, setRight] = useState(0)
+  const [allClicks, setAll] = useState([])
+
+  const handleLeftClick = () => {
+    /* 
+    *  This works because using concat() does not mutate 
+    *  the existing array (allClicks) but rather returns 
+    *  a new copy of it with the item added! 
+    *  This is not true if we use push()!!!
+    */
+    setAll(allClicks.concat('L'))
+    setLeft(left + 1)
+  }
+
+  const handleRightClick = () => {
+    setAll(allClicks.concat('R'))
+    setRight(right + 1)
+    debugger
+  }
+
+  const handleResetClick = () => {
+    setRight(0)
+    setLeft(0)
+    setAll([])
+  }
+
+  return (
+    <div>
+      {left}
+      <Button onClick={handleLeftClick} text="left"/>
+      <Button onClick={handleResetClick} text="reset"/>
+      <Button onClick={handleRightClick} text="right"/>
+      {right}
+      <History allClicks={allClicks}/>
+    </div>
+  )
+}
+
+ReactDOM.render(<App />, document.getElementById('root'))
