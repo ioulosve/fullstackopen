@@ -19,7 +19,7 @@ const CountriesList = ({countries}) => (
 
 const App = () => {
 
-  const [country, setCountry ] = useState('')
+  const [filter, setFilter ] = useState('')
   const [countries, setCountries ] = useState([])
 
   useEffect(() => {
@@ -31,16 +31,19 @@ const App = () => {
   },[])
 
   const handleInputCountry = (event) => {
-    setCountry(event.target.value)
-    const filteredCountries = countries.filter(c => c.name.toUpperCase().includes(country.toUpperCase()))
-    setCountries(filteredCountries)
+    setFilter(event.target.value)
   }
+  
+  //non settare lo stato countries per il filtro!
+  const filteredCountries = filter.length === 1 ? 
+    countries : 
+    countries.filter(c => c.name.toUpperCase().includes(filter.toUpperCase()))
 
   return (
     <div>
-      <div>find countries <input value={country} onChange={handleInputCountry}/></div>
-      <div>{ country === '' ? <Error message="Please write something"/> : 
-                              <CountriesList countries={countries}/>}
+      <div>find countries <input value={filter} onChange={handleInputCountry}/></div>
+      <div>{ filter === '' ? <Error message="Please write something"/> : 
+                              <CountriesList countries={filteredCountries}/>}
       </div>
     </div>
   );
