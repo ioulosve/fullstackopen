@@ -1,19 +1,24 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
-
-let personsFromDb = [
-  { name: 'Arto Hellas', number: '040-123456' },
-  { name: 'Ada Lovelace', number: '39-44-5323523' },
-  { name: 'Dan Abramov', number: '12-43-234345' },
-  { name: 'Mary Poppendieck', number: '39-23-6423122' }
-]
+import axios from 'axios'
 
 const App = () => {
-  const [ persons, setPersons ] = useState(personsFromDb)
+  const [ persons, setPersons ] = useState([])
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
+
+  const loadDataFromDB = () => {
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        setPersons(response.data)
+      })
+  }
+
+  //useEffect fires after every completed render
+  useEffect(loadDataFromDB, [])
 
   const resetUI = () => {
     setNewName('')
@@ -29,8 +34,7 @@ const App = () => {
     }
 
     const newPerson = {name: newName, number: newNumber}
-    personsFromDb.push(newPerson) //Update DB
-    setPersons(personsFromDb) //Update UI
+    setPersons(persons.concat(newPerson))
     resetUI()
   }
 
@@ -45,9 +49,9 @@ const App = () => {
   const handleNameFilter = (event) => {
     let nameToSearch = event.target.value
     if(nameToSearch === '') {
-      setPersons(personsFromDb)
+      loadDataFromDB()
     } else {
-      let filteredPersons = personsFromDb.filter(person => 
+      let filteredPersons = persons.filter(person => 
         person.name.toUpperCase().includes(nameToSearch.toUpperCase()))
       setPersons(filteredPersons)
     }
