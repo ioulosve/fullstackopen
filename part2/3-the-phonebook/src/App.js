@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
-import axios from 'axios'
+import personsService from './services/persons'
 
 const App = () => {
   const [ persons, setPersons ] = useState([])
@@ -10,10 +10,10 @@ const App = () => {
   const [ newNumber, setNewNumber ] = useState('')
 
   const loadDataFromDB = () => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
+    personsService
+      .getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons)
       })
   }
 
@@ -28,14 +28,31 @@ const App = () => {
   const addNewPerson = (event) => {
     event.preventDefault()
 
-    if(persons.some(person => person.name === newName)){
-      alert(`${newName} is already in the phonebook.`)
+    const newPerson = {name: newName, number: newNumber}
+
+    if(persons.some(person => person.name === newPerson.name)){
+      if(window.confirm(`${newPerson.name} is already in the phonebook. Update it?`)){
+        const id = persons.find(p => p.name === newPerson.name).id
+        personsService
+          .update(id, newPerson)
+          .then(updatedPerson => {
+            setPersons(persons.map(p => p.id !== id ? p : updatedPerson ))
+          })
+      }
       return
     }
 
-    const newPerson = {name: newName, number: newNumber}
-    setPersons(persons.concat(newPerson))
-    resetUI()
+    
+    // save to DB and update UI
+    personsService
+      .create(newPerson)
+      .then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson)) 
+        resetUI()
+      })
+      .catch(error => {
+        alert('Cannot save because server is unreachable')
+      })
   }
 
   const handleNewName = (event) => {
@@ -57,6 +74,16 @@ const App = () => {
     }
   }
 
+  const personDeleteHandler = (id) => {
+    if(window.confirm(`Delete ${persons.find(p => p.id === id).name} ?`)){
+      personsService
+      .destroy(id)
+      .then(() => {
+        setPersons(persons.filter(p => p.id !== id))
+      })
+    }
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -70,7 +97,7 @@ const App = () => {
           handleNewNumber={handleNewNumber}
         />
       <h2>Numbers</h2>
-        <Persons persons={persons}/>
+        <Persons persons={persons} deleteHandler={personDeleteHandler}/>
     </div>
   )
 }
