@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Country from './components/Country'
 import axios from 'axios'
 
 const Error = ({message}) => {
@@ -9,13 +10,46 @@ const Error = ({message}) => {
   )
 }
 
-const CountriesList = ({countries}) => (
-  <div>
-    {countries.map((country) => 
-      <p key={country.id}>{country.name}</p>
-    )}
-  </div>
-)
+const CountriesList = ({countries, setFilter, filter}) => {
+
+  if(filter === '') {
+    return (
+      <div>
+        <Error message="Please write something"/>
+      </div>
+    )
+  }
+  if(countries.length === 0) {
+    return (
+      <div>
+        <Error message="No matches"/>
+      </div>
+    )
+  }
+  if(countries.length === 1) {
+    return(
+      <Country country={countries[0]} />
+    )
+  }
+  if(countries.length > 10) {
+    return (
+      <div>
+        <Error message="Too many matches, specify another filter"/>
+      </div>
+    )
+  } else {
+    return (
+      <div>
+        {countries.map((country) => 
+          <div key={country.alpha2Code}>
+            <span>{country.name}</span>
+            <button onClick={() => setFilter(country.name)}>show</button>
+          </div>
+        )}
+      </div>
+    )
+  }
+}
 
 const App = () => {
 
@@ -26,7 +60,7 @@ const App = () => {
     axios
     .get('https://restcountries.eu/rest/v2/all')
     .then(response => {
-      setCountries(response.data.map((countryEl) => {return {name: countryEl.name, id: countryEl.alpha2Code}}))
+      setCountries(response.data)
     })
   },[])
 
@@ -41,9 +75,11 @@ const App = () => {
 
   return (
     <div>
-      <div>find countries <input value={filter} onChange={handleInputCountry}/></div>
-      <div>{ filter === '' ? <Error message="Please write something"/> : 
-                              <CountriesList countries={filteredCountries}/>}
+      <div>
+        find countries <input value={filter} onChange={handleInputCountry}/>
+      </div>
+      <div>
+        <CountriesList countries={filteredCountries} filter={filter} setFilter={setFilter}/>
       </div>
     </div>
   );
