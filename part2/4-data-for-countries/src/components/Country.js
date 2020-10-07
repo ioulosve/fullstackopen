@@ -9,7 +9,7 @@ const Weather = ({country, weather}) => {
   return(
     <div>
       <h2>Weather in {country.capital}</h2>
-      <img src={`http://openweathermap.org/img/w/${weather.weather[0].icon}.png`}></img>
+      <img src={`http://openweathermap.org/img/w/${weather.weather[0].icon}.png`} alt="weather icon"></img>
       <div>
         <b>Temperature:</b><span> {weather.main.temp} °C</span>
       </div>
