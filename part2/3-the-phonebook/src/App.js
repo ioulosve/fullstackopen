@@ -105,7 +105,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
-      <Notification message={message} dismissHandler={() => setMessage(null)}/>
+      <Notification message={message} dismissHandler={() => setMessage({...message, text: null })}/>
       <h2>Add a new</h2>
         <PersonForm 
           handleSubmit={addNewPerson}
