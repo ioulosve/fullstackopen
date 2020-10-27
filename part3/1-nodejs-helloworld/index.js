@@ -3,6 +3,16 @@ const app = express()
 
 app.use(express.json()) // needed to trasform json POST requests to Javascript objects.
 
+// This is a middleware function, it takes 3 arguments
+const requestLogger = (request, response, next) => {
+  console.log('Method:', request.method)
+  console.log('Path:  ', request.path)
+  console.log('Body:  ', request.body)
+  console.log('---')
+  next()
+}
+app.use(requestLogger) // custom middleware function declared below
+
 let notes = [
   { id: 1, 
     content: "HTML is easy", 
@@ -30,6 +40,7 @@ const generateId = () => {
   return maxId + 1
 }
 
+/**** Routes ****/
 app.get('/', (req,res) => {
   res.send('<h1>Hello World!</h1>')
 })
@@ -88,6 +99,12 @@ app.delete('/api/notes/:id', (req,res) => {
 })
 
 
+/*** Before-routes middlewares */
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error:'unknown endpoint' })
+}
+
+app.use(unknownEndpoint)
 
 const PORT = 3001
 app.listen(PORT, () => {
