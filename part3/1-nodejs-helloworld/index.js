@@ -1,6 +1,8 @@
 const express = require('express')
 const app = express()
 
+app.use(express.json()) // needed to trasform json POST requests to Javascript objects.
+
 let notes = [
   { id: 1, 
     content: "HTML is easy", 
@@ -20,6 +22,13 @@ let notes = [
     important: false 
   }
 ]
+
+const generateId = () => {
+  const maxId = notes.length > 0 
+    ? Math.max(...notes.map(n => n.id)) 
+    : 0
+  return maxId + 1
+}
 
 app.get('/', (req,res) => {
   res.send('<h1>Hello World!</h1>')
@@ -41,7 +50,35 @@ app.get('/api/notes/:id', (req, res) => {
   }
 })
 
-app.delete('api/notes/:id', (req,res) => {
+app.post('/api/notes', (request, response) => {
+  const body = request.body // without the app.use(express.json()), this will be undefined.
+  
+  /* We cannot rely on what the client is sending to create the new note.
+  /  We have to check that the request is correct and get only the necessary fields
+  /  discarding all the others.  
+  */
+
+  // check req correctness
+  if(!body.content) {
+    return response.status(400).json({
+      error: 'content missing'
+    })
+  }
+
+  // get only body.content and body.important. 
+  // IMP: NON é il CLIENT che crea l'oggetto nota ma è il SERVER!!
+  const note = {
+    content: body.content,
+    important: body.important || false,
+    date: new Date(),
+    id: generateId()
+  }
+
+  notes = notes.concat(note)
+  response.json(note)
+})
+
+app.delete('/api/notes/:id', (req,res) => {
   console.log('gne')
   const id = Number(req.params.id)
   console.log(id)
@@ -49,6 +86,7 @@ app.delete('api/notes/:id', (req,res) => {
 
   res.status(204).end() //204 means 'no content'
 })
+
 
 
 const PORT = 3001
