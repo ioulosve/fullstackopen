@@ -1,0 +1,20 @@
+{
+  "name": "2-phonebook-backend",
+  "version": "1.0.0",
+  "description": "nodejs backend for the phonebook app",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "author": "Giulio Verazzo",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.6"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "morgan": "^1.10.0"
+  }
+}

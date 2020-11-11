@@ -1,0 +1,77 @@
+body {
+  /*1. Centering */
+  margin: 0 auto;
+  max-width: 50em;
+
+  /*2. Spacing text */
+  line-height: 1.5;
+  padding: 2em 1em;
+
+  /*3. Choose the font */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /*4. Text color 
+    Instead of pure black for texts, let's use a softer shade of it. */
+  color: #444;
+}
+
+/*4.1 Add contrast by making important words darker */
+h1,
+h2,
+strong {
+  color: #333;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+h1 {
+  font-style: italic;
+}
+
+button {
+  margin: 0 0.5rem;
+  padding: 0.3rem;
+  border-radius: 5px;
+  border-color: aquamarine;
+  background: transparent;
+
+  cursor: pointer;
+  /* Choose a different font for buttons is a good idea*/
+  font-family: monospace;
+  text-transform: uppercase;
+  font-size: small;
+}
+
+.note {
+  color: grey;
+  padding-top: 3px;
+  font-size: 1.1em
+}
+
+.error {
+  display:flex;
+  justify-content: space-between;
+  color: red;
+  background: rgb(252, 195, 195);
+  font-size: 18px;
+  border-style: none;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.error button {
+  color: black;
+  border: none;
+  font-size: 18px;
+  font-family: monospace;
+  font-stretch: expanded;
+  text-decoration: none;
+}
+
