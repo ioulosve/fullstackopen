@@ -18,7 +18,7 @@ const personSchema = new mongoose.Schema({
   number: String
 })
 
-// define a Model
+// define a Model (based on the schema)
 const Person = mongoose.model('Person', personSchema)
 
 // node mongo.js password name number

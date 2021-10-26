@@ -1,7 +1,12 @@
+require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
 const app = express()
+
+//MongoDB Models
+const Note = require('./models/note')
+const { response } = require('express')
 
 morgan.token('body', (req) => {
   return JSON.stringify(req.body)
@@ -11,78 +16,43 @@ app.use(express.json()) // Is a MIDDLEWARE needed to trasform json POST requests
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 app.use(cors())
 
-let notes = [
-    {
-      id: 1,
-      content: "HTML is easy",
-      date: "2019-05-30T17:30:31.098Z",
-      important: true
-    },
-    {
-      id: 2,
-      content: "Browser can execute only JavaScript",
-      date: "2019-05-30T18:39:34.091Z",
-      important: false
-    },
-    {
-      id: 3,
-      content: "GET and POST are the most important methods of HTTP protocol",
-      date: "2019-05-30T19:20:14.298Z",
-      important: true
-    },
-    {
-      id: 4,
-      content: "new note",
-      date: "2020-10-05T15:59:45.604Z",
-      important: false
-    },
-    {
-      id: 5,
-      content: "mmm gne",
-      date: "2020-10-05T15:59:57.341Z",
-      important: false
-    }
-  ]
-
-const generateId = () => {
-  let newId = 0
-
-  // Fa cagare questa soluzione
-  do {
-    newId = Math.floor(Math.random() * Math.floor(999999))
-  }
-  while(notes.find(n => n.id === newId));
-  
-  return newId
-}
-
+// Get app info
 app.get('/info', (req,res) => {
-  res.send(`
+  Note.find({}).then(notes => {
+    res.send(`
     <div>
       <p>Notes has ${notes.length} notes</p>
       <p>${new Date().toString()}</p>
     </div>
   `)
+  })
 })
 
+// Get all notes
 app.get('/api/notes', (req,res) => {
-  res.json(notes)
+  // Search in the DB
+  Note.find({}).then(notes => {
+    //this calls the toJSON method in Mongoose
+    res.json(notes)
+  })  
 })
 
+// Get a single note
 app.get('/api/notes/:id', (req, res) => {
-  const id = Number(req.params.id)
-  const note = notes.find(n => n.id === id)
+  const id = req.params.id
 
-  if(!note) {
-    res.status(404).end()
-    console.log(`Note with id ${id} not found`)
-    return
-  }
+  Note.findById(id).then(note => {
+    res.json(note)
+  })
 
-  res.json(note)
-
+  // if(!note) {
+  //   res.status(404).end()
+  //   console.log(`Note with id ${id} not found`)
+  //   return
+  // }
 })
 
+// Create a new note
 app.post('/api/notes', (req, res) => {
   const body = req.body
 
@@ -92,17 +62,19 @@ app.post('/api/notes', (req, res) => {
     })
   }
   
-  const note = {
-    id: generateId(),
+  // note a is MongoDB Note object
+  const note = new Note({
     content: body.content,
-    date: new Date().toISOString(),
-    important: body.important
-  }
+    date: new Date(),
+    important: body.important || false
+  })
 
-  notes = notes.concat(note)
-  res.json(note)
+  note.save().then(savedNote => {
+    res.json(savedNote)
+  })
 })
 
+// Delete a note
 app.delete('/api/notes/:id', (req,res) => {
   const id = Number(req.params.id)
   const note = notes.find(n => n.id === id)
@@ -119,6 +91,7 @@ app.delete('/api/notes/:id', (req,res) => {
   })
 })
 
+// Modify a note
 app.put('/api/notes/:id', (req,res) => {
   //check if note to update exists
   const id = Number(req.params.id)

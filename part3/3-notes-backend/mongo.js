@@ -1,3 +1,5 @@
+/** This file is only a test to try MongoDB features */
+
 const mongoose = require('mongoose')
 
 if(process.argv.length < 3) {
@@ -22,19 +24,22 @@ const noteSchema = new mongoose.Schema({
 const Note = mongoose.model('Note', noteSchema) //mongoose will create a collection with the plural of the Model name.
 
 const note = new Note({
-  content: 'Not important note',
+  content: 'Openfullstack is awesome',
   date: new Date(),
-  important: false
+  important: true
 })
 
 // Those below are two operation on the db. Notice that they are callbacks, they will be called immediately and its not sure who will return first!
 
 note.save().then(result => {
   console.log('note saved')
-
   //if the connection is not closed, the program will never finish its execution
   mongoose.connection.close()
 })
+
+/* Calling find() on the Model object returns all the notes in the Mongo Collection. 
+  The parameter is a n object expressing a search condition in the Mongo search query syntax.
+  In this example we use an object with the paramenter important:true to extract only the important notes.
 
 Note.find({ important: true }).then(result => {
   result.forEach(note => {
@@ -42,3 +47,4 @@ Note.find({ important: true }).then(result => {
   })
   mongoose.connection.close()
 })
+*/
